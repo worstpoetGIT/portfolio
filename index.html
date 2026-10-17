@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="vendor/lenis.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -49,7 +50,7 @@
 <div id="access" aria-label="Cards"></div>
 
 <section id="finale" aria-hidden="true" aria-label="Contact">
-  <div class="fin-card">
+  <div class="fin-card" data-lenis-prevent>
     <div class="fin-num">06 / 06</div>
     <h2>Why this?</h2>
     <div class="fin-body detail-body"></div>
@@ -61,7 +62,7 @@
     <button class="detail-close" type="button" aria-label="Close">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
-    <div class="detail-scroll">
+    <div class="detail-scroll" data-lenis-prevent>
       <div class="detail-num"></div>
       <h2 id="detail-title"></h2>
       <div class="detail-body"></div>

@@ -1,4 +1,5 @@
 import * as THREE from './vendor/three.module.min.js';
+import Lenis from './vendor/lenis.mjs';
 import { buildWorld, buildSky, buildStars, buildEarth, buildEnvScenes, setSkyTheme } from './world.js';
 import { makeCar } from './car.js';
 import { makeFx } from './fx.js';
@@ -28,9 +29,11 @@ const ui = initUI({
       damageTarget = opened.size / ORBIT_COUNT;
       pendingHit = true;
     }
+    lenis?.stop();
   },
   onClose() {
     if (pendingHit) { pendingHit = false; hit = 1; burst = true; }
+    lenis?.start();
   },
 });
 
@@ -44,6 +47,10 @@ if (!fallback) {
   } catch (e) { fallback = true; renderer = null; }
 }
 
+// Lenis eases wheel/trackpad scrolling at roughly the rate the frame loop eases p,
+// so while it's easing, p follows the scroll position directly. Touch keeps
+// native momentum and the frame loop's easing.
+const lenis = fallback ? null : new Lenis({ lerp: 0.09, autoRaf: true });
 const scrollMax = () => Math.max(1, document.documentElement.scrollHeight - innerHeight);
 let skipJump = false;
 let dbgP = new URLSearchParams(location.search).get('p');
@@ -54,7 +61,7 @@ function pFromScroll() {
 }
 window.__openCard = (i) => ui.openDetail(i);
 window.__damage = () => ({ damage, damageTarget, opened: opened.size });
-replayBtn.addEventListener('click', () => { skipJump = true; scrollTo(0, 0); });
+replayBtn.addEventListener('click', () => { skipJump = true; lenis ? lenis.scrollTo(0, { immediate: true }) : scrollTo(0, 0); });
 
 // ---- light / dark mode (dark is the original look; light is a full daytime version)
 let theme = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
@@ -245,6 +252,7 @@ async function start() {
     const target = pFromScroll();
     let jumped = false;
     if (skipJump) { p = target; skipJump = false; jumped = true; }
+    else if (lenis?.isScrolling === 'smooth') p = target;
     else p += (target - p) * (1 - Math.exp(-dt * 5.5));
     if (Math.abs(target - p) < 1e-5) p = target;
 
